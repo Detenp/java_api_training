@@ -1,5 +1,8 @@
 package fr.lernejo.navy_battle;
 
+import fr.lernejo.navy_battle.game.Board;
+import fr.lernejo.navy_battle.game.IAForTheWin;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -26,8 +29,16 @@ public class Launcher {
                     + port + "\", \"message\":\"hello\"}"))
                 .build();
 
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                System.out.println(response.body());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            Board myBoard = new Board();
+            IAForTheWin ia = new IAForTheWin(myBoard, url);
+
+            while (true) {
+                if (!ia.shootLoop()) break;
+            }
+
+            server.close();
         }
         else {
             Server server = new Server(port,1);

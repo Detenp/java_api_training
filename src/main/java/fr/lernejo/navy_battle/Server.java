@@ -20,7 +20,7 @@ public class Server {
         HttpServer httpServer = HttpServer.create(new InetSocketAddress("localhost", port), 0);
         httpServer.setExecutor(Executors.newFixedThreadPool(1));
         httpServer.createContext("/ping", new Ping());
-        httpServer.createContext("/api/game/start", new Start(id, port));
+        httpServer.createContext("/api/game/start", new Start(id, port, (Board) boards.getK()));
         httpServer.createContext("/api/game/fire", new Fire((Board) boards.getK()));
         this.httpInstance = httpServer;
     }

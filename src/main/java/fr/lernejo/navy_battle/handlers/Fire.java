@@ -37,14 +37,14 @@ public class Fire implements HttpHandler {
         ShootConsequence consequence = board.getShotConsequence(x, y);
         String strConsequence = switch (consequence) {
             case SUNK -> "sunk";
-            case HIT -> "miss";
-            case MISS -> "hit";
+            case HIT -> "hit";
+            case MISS -> "miss";
         };
         boolean shipLeft = !board.didLose();
 
         JSONObject responseJo = new JSONObject();
 
-        responseJo.put("consequence", consequence);
+        responseJo.put("consequence", strConsequence);
         responseJo.put("shipLeft", shipLeft);
 
         sendResponse(202, responseJo.toJSONString(), exchange);
