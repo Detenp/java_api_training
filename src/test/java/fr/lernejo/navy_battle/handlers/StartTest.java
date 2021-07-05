@@ -55,10 +55,11 @@ class StartTest {
         Assertions.assertThat(actual.statusCode()).isEqualTo(400);
         Assertions.assertThat(actual.body().getBytes()).isEqualTo("Bad request".getBytes(StandardCharsets.UTF_8));
 
+        httpServer.stop(0);
     }
 
     @Test
-    void handleGoodRequest() throws Exception {
+    void handleGoodRequestTest() throws Exception {
         HttpServer httpServer = HttpServer.create(new InetSocketAddress("localhost", 9876), 0);
         httpServer.setExecutor(Executors.newFixedThreadPool(1));
         httpServer.createContext("/start", new Start(1, 4567));
@@ -73,5 +74,7 @@ class StartTest {
 
         HttpResponse<String> actual = client.send(request, HttpResponse.BodyHandlers.ofString());
         Assertions.assertThat(actual.statusCode()).isEqualTo(202);
+
+        httpServer.stop(0);
     }
 }
