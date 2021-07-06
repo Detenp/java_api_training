@@ -2,6 +2,7 @@ package fr.lernejo.navy_battle.handlers;
 
 import com.sun.net.httpserver.HttpServer;
 import fr.lernejo.navy_battle.game.Board;
+import fr.lernejo.navy_battle.game.Player;
 import org.junit.jupiter.api.Test;
 import org.assertj.core.api.Assertions;
 
@@ -20,7 +21,7 @@ class StartTest {
     public void handleNotPost() throws Exception {
         HttpServer httpServer = HttpServer.create(new InetSocketAddress("localhost", 9876), 0);
         httpServer.setExecutor(Executors.newFixedThreadPool(1));
-        httpServer.createContext("/start", new Start(1, 4567, new Board()));
+        httpServer.createContext("/start", new Start("1", 4567, new Player[2]));
         httpServer.start();
 
         HttpClient client = HttpClient.newHttpClient();
@@ -42,7 +43,7 @@ class StartTest {
     void handleBadRequest() throws Exception {
         HttpServer httpServer = HttpServer.create(new InetSocketAddress("localhost", 9876), 0);
         httpServer.setExecutor(Executors.newFixedThreadPool(1));
-        httpServer.createContext("/start", new Start(1, 4567, new Board()));
+        httpServer.createContext("/start", new Start("1", 4567, new Player[2]));
         httpServer.start();
 
         HttpClient client = HttpClient.newHttpClient();
@@ -63,7 +64,7 @@ class StartTest {
     void handleGoodRequestTest() throws Exception {
         HttpServer httpServer = HttpServer.create(new InetSocketAddress("localhost", 9876), 0);
         httpServer.setExecutor(Executors.newFixedThreadPool(1));
-        httpServer.createContext("/start", new Start(1, 4567, new Board()));
+        httpServer.createContext("/start", new Start("1", 4567, new Player[2]));
         httpServer.start();
 
         HttpClient client = HttpClient.newHttpClient();

@@ -1,35 +1,32 @@
 package fr.lernejo.navy_battle.game;
 
-import com.sun.net.httpserver.HttpExchange;
 import fr.lernejo.navy_battle.models.Boat;
 import fr.lernejo.navy_battle.models.Direction;
 import fr.lernejo.navy_battle.models.ShootConsequence;
 import fr.lernejo.navy_battle.models.Tuple;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class IAForTheWin {
     private final Board myBoard;
     private final int[][] enemyBoard;
-    private final String url;
+    private final Player[] players;
 
-    public IAForTheWin(Board myBoard, String url) {
-        this.myBoard = myBoard;
-        this.url = url;
+    public IAForTheWin(Player[] players) {
+        this.myBoard = new Board();
 
         this.enemyBoard = new int[10][10];
+        this.players = players;
         placeBoats();
     }
 
@@ -51,34 +48,23 @@ public class IAForTheWin {
         }
     }
 
-    public boolean shootLoop() throws Exception {
+    public boolean shoot() throws InterruptedException, ParseException, IOException {
         int x, y;
         do {
-            x = ThreadLocalRandom.current().nextInt(0, 10);
-            y = ThreadLocalRandom.current().nextInt(0, 10);
+            x = (int) (Math.random() * 10);
+            y = (int) (Math.random() * 10);
         } while (enemyBoard[x][y] == 1);
 
-        Tuple<ShootConsequence, Boolean> state = sendFire(x, y, url);
-        Direction dir = Direction.values()[ThreadLocalRandom.current().nextInt(0, 3)];
-        while ((boolean) state.getV() && state.getK() == ShootConsequence.HIT) {
-            enemyBoard[x][y] = -1;
-            switch (dir) {
-                case UP -> x = x - 1;
-                case DOWN -> x = x + 1;
-                case LEFT -> y = y - 1;
-                case RIGHT -> y = y + 1;
-            }
+        Tuple<ShootConsequence, Boolean> state = sendFire(x, y, players[1].getUrl());
 
-            state = sendFire(x, y, url);
-        }
-
-       return (boolean) state.getV();
+        return (boolean) state.getV();
     }
 
-    private Tuple<ShootConsequence, Boolean> sendFire(int x, int y, String url) throws Exception{
+    private Tuple<ShootConsequence, Boolean> sendFire(int x, int y, String url) throws InterruptedException, ParseException, IOException {
         HttpClient client = HttpClient.newHttpClient();
+        char yChar = (char) (y + 'A');
         HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(url + "/api/game/fire?cell=" + (x + 'A') + y))
+            .uri(URI.create(url + "/api/game/fire?cell=" + yChar + (x + 1)))
             .setHeader("Accept","application/json")
             .GET()
             .build();
@@ -102,5 +88,9 @@ public class IAForTheWin {
             case "hit" -> ShootConsequence.HIT;
             default -> throw new IllegalStateException("Unexpected value: " + s);
         };
+    }
+
+    public Board getMyBoard() {
+        return myBoard;
     }
 }

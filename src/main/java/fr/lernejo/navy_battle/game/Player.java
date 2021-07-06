@@ -1,19 +1,19 @@
 package fr.lernejo.navy_battle.game;
 
 public class Player {
-    private final int id;
-    private final int port;
+    private final String id;
+    private final String url;
 
-    public Player(int id, int port) {
+    public Player(String id, String url) {
         this.id = id;
-        this.port = port;
+        this.url = url;
     }
 
-    public int getPort() {
-        return port;
+    public String getUrl() {
+        return url;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 }

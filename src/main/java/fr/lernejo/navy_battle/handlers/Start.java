@@ -2,6 +2,7 @@ package fr.lernejo.navy_battle.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import fr.lernejo.navy_battle.game.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -9,12 +10,14 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class Start implements HttpHandler {
-    private final int id;
+    private final String id;
     private final int port;
+    private final Player[] players;
 
-    public Start(int id, int port) {
+    public Start(String id, int port, Player[] players) {
         this.id = id;
         this.port = port;
+        this.players = players;
     }
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -40,6 +43,9 @@ public class Start implements HttpHandler {
             sendResponse(400, "Bad request", exchange);
             return;
         }
+
+        players[1] = new Player(reqId, url);
+        players[0] = new Player(id, "http://localhost:" + port);
 
         JSONObject responseJo = new JSONObject();
 
