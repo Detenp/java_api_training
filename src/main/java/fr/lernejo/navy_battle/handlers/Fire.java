@@ -60,18 +60,18 @@ public class Fire implements HttpHandler {
 
             boolean isOver;
             try {
-                isOver = ia.shoot();
+                isOver = !ia.shoot();
             } catch (InterruptedException | ParseException e) {
                 sendResponse(500, "Internal server error.", exchange);
                 return;
             }
 
             if (isOver) {
-                System.out.println("Player " + players[0].getId() + "won!");
+                System.out.println("Player " + players[0].getId() + " won!");
             }
         }
         else {
-            System.out.println("Player " + players[1].getId() + "won!");
+            System.out.println("Player " + players[1].getId() + " won!");
         }
     }
 

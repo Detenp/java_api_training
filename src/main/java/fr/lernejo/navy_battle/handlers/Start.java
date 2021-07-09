@@ -45,7 +45,6 @@ public class Start implements HttpHandler {
         }
 
         players[1] = new Player(reqId, url);
-        players[0] = new Player(id, "http://localhost:" + port);
 
         JSONObject responseJo = new JSONObject();
 
@@ -57,6 +56,7 @@ public class Start implements HttpHandler {
     }
 
     private void sendResponse(int code, String message, HttpExchange exchange) throws IOException{
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(code, message.length());
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(message.getBytes(StandardCharsets.UTF_8));

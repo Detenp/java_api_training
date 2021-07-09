@@ -9,6 +9,7 @@ import org.json.simple.parser.JSONParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -25,15 +26,28 @@ public class Launcher {
 
         if (args.length > 1) {
             String url = args[1];
+            Player[] players = new Player[2];
+            players[0] = new Player(port + "", "http://localhost:" + port);
+            IAForTheWin ia = new IAForTheWin(players);
+            Server server = new Server(port,port + "", players, ia);
+            server.start();
+
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url + "/api/game/start"))
                 .setHeader("Accept","application/json")
-                .POST(HttpRequest.BodyPublishers.ofString("{\"id\":\"2\", \"url\":\"localhost:"
+                .POST(HttpRequest.BodyPublishers.ofString("{\"id\":\"" + port + "\", \"url\":\"http://localhost:"
                     + port + "\", \"message\":\"hello\"}"))
                 .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = null;
+            boolean success = false;
+            do {
+                try {
+                    response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    success = true;
+                } catch(ConnectException ignored){}
+            } while(!success);
 
             JSONObject jo;
             jo = (JSONObject) (new JSONParser()).parse(response.body());
@@ -45,19 +59,16 @@ public class Launcher {
             if (reqId == null || url == null || message == null) {
                 return;
             }
-            Player[] players = new Player[2];
-            players[0] = new Player("2", "localhost:" + port);
+
             players[1] = new Player(reqId, enemyUrl);
-            IAForTheWin ia = new IAForTheWin(players);
-            Server server = new Server(port,"2", players, ia);
-            server.start();
 
             System.out.println("Battle is about to start between " + players[0].getUrl() + " and " + players[1].getUrl());
             ia.shoot();
         }
         else {
             Player[] players = new Player[2];
-            Server server = new Server(port,"1", players, new IAForTheWin(players));
+            players[0] = new Player(port + "", "http://localhost:" + port);
+            Server server = new Server(port,port + "", players, new IAForTheWin(players));
             server.start();
         }
     }
