@@ -54,6 +54,7 @@ public class IAForTheWin {
             x = (int) (Math.random() * 10);
             y = (int) (Math.random() * 10);
         } while (enemyBoard[x][y] == 1);
+        enemyBoard[x][y] = 1;
 
         Tuple<ShootConsequence, Boolean> state = sendFire(x, y, players[1].getUrl());
 
