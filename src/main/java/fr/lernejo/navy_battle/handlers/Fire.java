@@ -76,6 +76,7 @@ public class Fire implements HttpHandler {
     }
 
     private void sendResponse(int code, String message, HttpExchange exchange) throws IOException{
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.sendResponseHeaders(code, message.length());
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(message.getBytes(StandardCharsets.UTF_8));
