@@ -38,9 +38,25 @@ public class Fire implements HttpHandler {
             return;
         }
 
-        sendResponse(202, prepareObjectToSend(x, y).toJSONString(), exchange);
 
-        if (!ia.getMyBoard().didLose()) {
+        ShootConsequence consequence = ia.getMyBoard().getShotConsequence(x, y);
+        String strConsequence = switch (consequence) {
+            case SUNK -> "sunk";
+            case HIT -> "hit";
+            case MISS -> "miss";
+        };
+        boolean shipLeft = !ia.getMyBoard().didLose();
+
+        JSONObject responseJo = new JSONObject();
+
+        System.out.println(players[1].getId() + " shot on " + cell + " and " + strConsequence);
+
+        responseJo.put("consequence", strConsequence);
+        responseJo.put("shipLeft", shipLeft);
+
+        sendResponse(202, responseJo.toJSONString(), exchange);
+
+        if (shipLeft) {
 
             boolean isOver;
             try {
@@ -65,26 +81,5 @@ public class Fire implements HttpHandler {
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(message.getBytes(StandardCharsets.UTF_8));
         }
-    }
-
-    private String consequenceToStr(ShootConsequence consequence) {
-        return switch (consequence) {
-            case SUNK -> "sunk";
-            case HIT -> "hit";
-            case MISS -> "miss";
-        };
-    }
-
-    private JSONObject prepareObjectToSend(int x, int y) {
-        ShootConsequence consequence = ia.getMyBoard().getShotConsequence(x, y);
-        String strConsequence = consequenceToStr(consequence);
-        boolean shipLeft = !ia.getMyBoard().didLose();
-
-        JSONObject responseJo = new JSONObject();
-
-        responseJo.put("consequence", strConsequence);
-        responseJo.put("shipLeft", shipLeft);
-
-        return responseJo;
     }
 }

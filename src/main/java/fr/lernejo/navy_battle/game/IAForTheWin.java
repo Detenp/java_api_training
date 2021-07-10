@@ -54,7 +54,6 @@ public class IAForTheWin {
             x = (int) (Math.random() * 10);
             y = (int) (Math.random() * 10);
         } while (enemyBoard[x][y] == 1);
-        enemyBoard[x][y] = 1;
 
         Tuple<ShootConsequence, Boolean> state = sendFire(x, y, players[1].getUrl());
 
@@ -62,10 +61,15 @@ public class IAForTheWin {
     }
 
     private Tuple<ShootConsequence, Boolean> sendFire(int x, int y, String url) throws InterruptedException, ParseException, IOException {
-        String yChar = (char) (y + 'A') + "";
-        String cell = yChar + (x + 1) + "";
+        HttpClient client = HttpClient.newHttpClient();
+        char yChar = (char) (y + 'A');
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url + "/api/game/fire?cell=" + yChar + (x + 1)))
+            .setHeader("Accept","application/json")
+            .GET()
+            .build();
 
-        HttpResponse<String> response = sendFireRequest(cell, url);
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         JSONObject jo;
 
@@ -88,16 +92,5 @@ public class IAForTheWin {
 
     public Board getMyBoard() {
         return myBoard;
-    }
-
-    private HttpResponse<String> sendFireRequest(String cell, String url) throws InterruptedException, IOException{
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(url + "/api/game/fire?cell=" + cell))
-            .setHeader("Accept","application/json")
-            .GET()
-            .build();
-
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }

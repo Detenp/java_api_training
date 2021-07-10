@@ -17,27 +17,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
 public class Launcher {
-    /*
-    public static void main(String[] args) throws Exception {
-        if (args.length < 1) throw new IllegalArgumentException("Expected at least port.");
-        int port = Integer.parseInt(args[0]);
-        Player[] players = new Player[2];
-        players[0] = new Player(port + "", "http://localhost:" + port);
-        Server server = new Server(port, port + "", players, new IAForTheWin(players));
-        server.start();
-        if (args.length > 1) {
-            String url = args[1];
-            boolean success = false; HttpResponse<String> response = null;
-            do {
-                try {
-                    response =  new Utils().sendRequest(port, url); success = true;
-                } catch (ConnectException ignored){}
-            } while(!success);
-            players[1] = new Utils().playerFromJSonResponse(response);
-            server.getIa().shoot();
-        }
-    }*/
-
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             throw new IllegalArgumentException("Expected at least port.");
@@ -92,5 +71,18 @@ public class Launcher {
             Server server = new Server(port,port + "", players, new IAForTheWin(players));
             server.start();
         }
+    }
+
+    private String readRequestBody(HttpExchange exchange) throws IOException {
+        StringBuilder buffer = new StringBuilder(512);
+        try (InputStreamReader is = new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8);
+             BufferedReader br = new BufferedReader(is)) {
+            int b;
+            while ((b = br.read()) != -1) {
+                buffer.append((char) b);
+            }
+        }
+
+        return buffer.toString();
     }
 }

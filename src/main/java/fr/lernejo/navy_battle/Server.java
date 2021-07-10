@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 
 public class Server {
     private final HttpServer httpInstance;
-    private final IAForTheWin ia;
 
     public Server(int port, String id, Player[] players, IAForTheWin ia) throws IOException{
 
@@ -23,12 +22,7 @@ public class Server {
         httpServer.createContext("/api/game/start", new Start(id, port, players));
         httpServer.createContext("/api/game/fire", new Fire(players, ia));
 
-        this.ia = ia;
         this.httpInstance = httpServer;
-    }
-
-    public IAForTheWin getIa() {
-        return this.ia;
     }
 
     public void start() {
