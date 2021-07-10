@@ -26,10 +26,13 @@ public class Launcher {
         server.start();
         if (args.length > 1) {
             String url = args[1];
-            Utils utils = new Utils();
-            HttpResponse<String> response =  utils.sendRequest(port, url);
-            players[1] = utils.playerFromJSonResponse(response);
-            System.out.println("Battle is about to start between " + players[0].getUrl() + " and " + players[1].getUrl());
+            boolean success = false; HttpResponse<String> response = null;
+            do {
+                try {
+                    response =  new Utils().sendRequest(port, url); success = true;
+                } catch (ConnectException ignored){}
+            } while(!success);
+            players[1] = new Utils().playerFromJSonResponse(response);
             server.getIa().shoot();
         }
     }
