@@ -19,23 +19,16 @@ import java.nio.charset.StandardCharsets;
 public class Launcher {
     public static void main(String[] args) throws Exception {
         if (args.length < 1) throw new IllegalArgumentException("Expected at least port.");
-
         int port = Integer.parseInt(args[0]);
         Player[] players = new Player[2];
         players[0] = new Player(port + "", "http://localhost:" + port);
         Server server = new Server(port, port + "", players, new IAForTheWin(players));
         server.start();
-
         if (args.length > 1) {
             String url = args[1];
-            server.start();
-
             Utils utils = new Utils();
-
             HttpResponse<String> response =  utils.sendRequest(port, url);
-
             players[1] = utils.playerFromJSonResponse(response);
-
             System.out.println("Battle is about to start between " + players[0].getUrl() + " and " + players[1].getUrl());
             server.getIa().shoot();
         }

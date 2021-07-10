@@ -62,8 +62,8 @@ public class IAForTheWin {
     }
 
     private Tuple<ShootConsequence, Boolean> sendFire(int x, int y, String url) throws InterruptedException, ParseException, IOException {
-        HttpClient client = HttpClient.newHttpClient();
-        String cell = (char) (y + 'A') + (char) (x + 1) + "";
+        String yChar = (char) (y + 'A') + "";
+        String cell = yChar + (x + 1) + "";
 
         HttpResponse<String> response = sendFireRequest(cell, url);
 
