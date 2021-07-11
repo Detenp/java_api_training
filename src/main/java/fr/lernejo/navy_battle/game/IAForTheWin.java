@@ -32,7 +32,6 @@ public class IAForTheWin {
 
     public IAForTheWin(Player[] players, int[][] enemyBoard) {
         this.myBoard = new Board();
-
         this.enemyBoard = enemyBoard;
         this.players = players;
         placeBoats();
@@ -41,7 +40,6 @@ public class IAForTheWin {
     public IAForTheWin(Player[] players, Board myBoard) {
         this.myBoard = myBoard;
         this.players = players;
-
         this.enemyBoard = new int[10][10];
     }
 
@@ -106,7 +104,5 @@ public class IAForTheWin {
         };
     }
 
-    public Board getMyBoard() {
-        return myBoard;
-    }
+    public Board getMyBoard() { return myBoard; }
 }
