@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class IAForTheWin {
     private final Board myBoard;
-    private final int[][] enemyBoard;
+    protected final int[][] enemyBoard;
     private final Player[] players;
 
     public IAForTheWin(Player[] players) {
@@ -28,6 +28,21 @@ public class IAForTheWin {
         this.enemyBoard = new int[10][10];
         this.players = players;
         placeBoats();
+    }
+
+    public IAForTheWin(Player[] players, int[][] enemyBoard) {
+        this.myBoard = new Board();
+
+        this.enemyBoard = enemyBoard;
+        this.players = players;
+        placeBoats();
+    }
+
+    public IAForTheWin(Player[] players, Board myBoard) {
+        this.myBoard = myBoard;
+        this.players = players;
+
+        this.enemyBoard = new int[10][10];
     }
 
     private void placeBoats() {
@@ -61,7 +76,7 @@ public class IAForTheWin {
         return (boolean) state.getV();
     }
 
-    private Tuple<ShootConsequence, Boolean> sendFire(int x, int y, String url) throws InterruptedException, ParseException, IOException {
+    protected Tuple<ShootConsequence, Boolean> sendFire(int x, int y, String url) throws InterruptedException, ParseException, IOException {
         HttpClient client = HttpClient.newHttpClient();
         char yChar = (char) (y + 'A');
         HttpRequest request = HttpRequest.newBuilder()

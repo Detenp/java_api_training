@@ -13,6 +13,11 @@ public class Board {
         this.emptyValue = 0;
     }
 
+    public Board(int[][] board) {
+        this.board = board;
+        this.emptyValue = 0;
+    }
+
     public boolean didLose() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
